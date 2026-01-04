@@ -49,8 +49,8 @@ local function save_profiles(threshold)
 end
 
 time([[Luarocks path setup]], true)
-local package_path_str = "/Users/tar/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?.lua;/Users/tar/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?/init.lua;/Users/tar/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?.lua;/Users/tar/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?/init.lua"
-local install_cpath_pattern = "/Users/tar/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/lua/5.1/?.so"
+local package_path_str = "/Users/tar/.cache/nvim/packer_hererocks/2.1.1765228720/share/lua/5.1/?.lua;/Users/tar/.cache/nvim/packer_hererocks/2.1.1765228720/share/lua/5.1/?/init.lua;/Users/tar/.cache/nvim/packer_hererocks/2.1.1765228720/lib/luarocks/rocks-5.1/?.lua;/Users/tar/.cache/nvim/packer_hererocks/2.1.1765228720/lib/luarocks/rocks-5.1/?/init.lua"
+local install_cpath_pattern = "/Users/tar/.cache/nvim/packer_hererocks/2.1.1765228720/lib/lua/5.1/?.so"
 if not string.find(package.path, package_path_str, 1, true) then
   package.path = package.path .. ';' .. package_path_str
 end
@@ -84,6 +84,12 @@ _G.packer_plugins = {
     path = "/Users/tar/.local/share/nvim/site/pack/packer/start/LuaSnip",
     url = "https://github.com/L3MON4D3/LuaSnip"
   },
+  ["claude-code.nvim"] = {
+    config = { "\27LJ\2\n9\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\16claude-code\frequire\0" },
+    loaded = true,
+    path = "/Users/tar/.local/share/nvim/site/pack/packer/start/claude-code.nvim",
+    url = "https://github.com/greggh/claude-code.nvim"
+  },
   ["cmp-buffer"] = {
     loaded = true,
     path = "/Users/tar/.local/share/nvim/site/pack/packer/start/cmp-buffer",
@@ -108,6 +114,12 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/tar/.local/share/nvim/site/pack/packer/start/cmp_luasnip",
     url = "https://github.com/saadparwaiz1/cmp_luasnip"
+  },
+  ["codecompanion.nvim"] = {
+    config = { "\27LJ\2\n§\1\0\0\6\1\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0005\3\6\0005\4\4\0-\5\0\0=\5\5\4=\4\a\3D\0\3\0\0\0\benv\1\0\1\benv\0\28CLAUDE_CODE_OAUTH_TOKEN\1\0\1\28CLAUDE_CODE_OAUTH_TOKEN\0\16claude_code\vextend\27codecompanion.adapters\frequire˜\1\1\0\6\1\n\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\b\0005\3\6\0005\4\4\0003\5\3\0=\5\5\4=\4\a\3=\3\t\2B\0\2\1K\0\1\0\1À\radapters\1\0\1\radapters\0\bacp\1\0\1\bacp\0\16claude_code\1\0\1\16claude_code\0\0\nsetup\18codecompanion\frequire\0" },
+    loaded = true,
+    path = "/Users/tar/.local/share/nvim/site/pack/packer/start/codecompanion.nvim",
+    url = "https://github.com/olimorris/codecompanion.nvim"
   },
   ["editorconfig-vim"] = {
     loaded = true,
@@ -226,6 +238,14 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
+-- Config for: codecompanion.nvim
+time([[Config for codecompanion.nvim]], true)
+try_loadstring("\27LJ\2\n§\1\0\0\6\1\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0005\3\6\0005\4\4\0-\5\0\0=\5\5\4=\4\a\3D\0\3\0\0\0\benv\1\0\1\benv\0\28CLAUDE_CODE_OAUTH_TOKEN\1\0\1\28CLAUDE_CODE_OAUTH_TOKEN\0\16claude_code\vextend\27codecompanion.adapters\frequire˜\1\1\0\6\1\n\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\b\0005\3\6\0005\4\4\0003\5\3\0=\5\5\4=\4\a\3=\3\t\2B\0\2\1K\0\1\0\1À\radapters\1\0\1\radapters\0\bacp\1\0\1\bacp\0\16claude_code\1\0\1\16claude_code\0\0\nsetup\18codecompanion\frequire\0", "config", "codecompanion.nvim")
+time([[Config for codecompanion.nvim]], false)
+-- Config for: claude-code.nvim
+time([[Config for claude-code.nvim]], true)
+try_loadstring("\27LJ\2\n9\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\16claude-code\frequire\0", "config", "claude-code.nvim")
+time([[Config for claude-code.nvim]], false)
 -- Config for: vim-devicons
 time([[Config for vim-devicons]], true)
 try_loadstring("\27LJ\2\n\v\0\0\1\0\0\0\1K\0\1\0\0", "config", "vim-devicons")

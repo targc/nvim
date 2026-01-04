@@ -118,6 +118,36 @@ vim.cmd [[hi TreesitterContextBottom gui=none guibg=purple]]
 -- vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#1f2335]]
 vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white ]]
 
+vim.api.nvim_create_user_command('Xbe', function()
+  vim.cmd("'<,'>pyfile ~/Documents/alpha/nvimer/base64_encode.py")
+end, { range = true })
+
+vim.api.nvim_create_user_command('Xbd', function()
+  vim.cmd("'<,'>pyfile ~/Documents/alpha/nvimer/base64_decode.py")
+end, { range = true })
+
+vim.api.nvim_create_user_command('Xbye', function()
+  vim.cmd("pyfile ~/Documents/alpha/nvimer/base64_encode_yaml.py")
+end, { range = true })
+
+vim.api.nvim_create_user_command('Xbyd', function()
+  vim.cmd("pyfile ~/Documents/alpha/nvimer/base64_decode_yaml.py")
+end, { range = true })
+
+vim.api.nvim_create_user_command('Xbyv', function()
+  vim.cmd("pyfile ~/Documents/alpha/nvimer/base64_view_yaml.py")
+end, { range = true })
+
+vim.keymap.set("v", "<leader>be", ":Xbe<CR>")
+vim.keymap.set("v", "<leader>bd", ":Xbd<CR>")
+vim.keymap.set("v", "<leader>bye", ":Xbye<CR>")
+vim.keymap.set("v", "<leader>byd", ":Xbyd<CR>")
+vim.keymap.set("v", "<leader>byv", ":Xbyv<CR>")
+vim.keymap.set("n", "<leader>c", ":noh<CR>")
+
+vim.keymap.set("n", "<leader>cn", ":cn<CR>")
+vim.keymap.set("n", "<leader>cp", ":cp<CR>")
+
 ------------- PLUGINS -------------
 
 local ensure_packer = function()
@@ -148,6 +178,9 @@ return require('packer').startup(function(use)
     require('plugins/telescope')(use)
     require('plugins/theme')(use)
     require('plugins/treesitter')(use)
+    require('plugins/vibe')(use)
+    require('plugins/codeagent')(use)
+    -- require('plugins/cursor')(use)
 
     -------
     -- Automatically set up your configuration after cloning packer.nvim

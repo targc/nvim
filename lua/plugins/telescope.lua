@@ -1,6 +1,6 @@
 return function(use)
     use {
-        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+        'nvim-telescope/telescope.nvim', tag = '0.1.8',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
 
@@ -18,7 +18,7 @@ return function(use)
                     ["<C-h>"] = "which_key",
                     ["<C-d>"] = telescope_actions.delete_buffer,
                 }
-            }
+            },
         },
         pickers = {
             find_files = {
