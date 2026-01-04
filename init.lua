@@ -18,14 +18,18 @@ vim.opt.wrap = true
 
 vim.opt.swapfile = false
 vim.opt.backup = true
-vim.opt.backupdir = os.getenv("HOME") .. "/.config/nvim/.cache/backupdir"
-vim.opt.undodir = os.getenv("HOME") .. "/.config/nvim/.cache/undodir"
+vim.opt.backupdir = vim.fn.stdpath("state") .. "/backup//"
+vim.opt.undodir = vim.fn.stdpath("state") .. "/undo//"
 vim.opt.undofile = true
 
 vim.opt.hlsearch = true
 vim.opt.incsearch = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 vim.opt.termguicolors = true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
@@ -35,7 +39,6 @@ vim.opt.updatetime = 50
 
 -- vim.opt.colorcolumn = "80"
 
-vim.opt.ttyfast = true
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"
@@ -148,46 +151,58 @@ vim.keymap.set("n", "<leader>c", ":noh<CR>")
 vim.keymap.set("n", "<leader>cn", ":cn<CR>")
 vim.keymap.set("n", "<leader>cp", ":cp<CR>")
 
-------------- PLUGINS -------------
+------------- PLUGINS (lazy.nvim) -------------
 
-local ensure_packer = function()
-    local fn = vim.fn
-    local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-    if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
-        vim.cmd [[packadd packer.nvim]]
-        return true
-    end
-    return false
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.uv.fs_stat(lazypath) then
+    vim.fn.system({
+        "git", "clone", "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", lazypath,
+    })
 end
+vim.opt.rtp:prepend(lazypath)
 
-local packer_bootstrap = ensure_packer()
+require("lazy").setup("plugins", {
+    change_detection = { notify = false },
+})
 
-return require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
+------------- LSP (native vim.lsp.config) -------------
 
-    -------
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(args)
+        local opts = { buffer = args.buf }
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "K", function() vim.lsp.buf.hover({ border = 'single' }) end, opts)
+        vim.keymap.set("n", "<leader>lws", vim.lsp.buf.workspace_symbol, opts)
+        vim.keymap.set("n", "<leader>ld", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "<leader>lca", vim.lsp.buf.code_action, opts)
+        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+        vim.keymap.set("n", "<leader>lrn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("i", "<C-a>", vim.lsp.buf.signature_help, opts)
+        vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format({ async = true }) end, opts)
+    end,
+})
 
-    require('plugins/quickfix')(use)
-    require('plugins/bufferline')(use)
-    require('plugins/comment')(use)
-    require('plugins/filetree')(use)
-    require('plugins/git')(use)
-    require('plugins/lsp')(use)
-    require('plugins/notification')(use)
-    require('plugins/telescope')(use)
-    require('plugins/theme')(use)
-    require('plugins/treesitter')(use)
-    require('plugins/vibe')(use)
-    require('plugins/codeagent')(use)
-    -- require('plugins/cursor')(use)
+vim.lsp.config('lua_ls', {
+    settings = { Lua = { diagnostics = { globals = { 'vim' } } } }
+})
+vim.lsp.config('yamlls', {
+    settings = { yaml = { keyOrdering = false } }
+})
+vim.lsp.enable({ 'rust_analyzer', 'lua_ls', 'yamlls' })
 
-    -------
-    -- Automatically set up your configuration after cloning packer.nvim
-    -- Put this at the end after all plugins
-    if packer_bootstrap then
-        require('packer').sync()
-    end
-end)
-
----
+vim.diagnostic.config({
+    virtual_text = true,
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = 'E',
+            [vim.diagnostic.severity.WARN] = 'W',
+            [vim.diagnostic.severity.HINT] = 'H',
+            [vim.diagnostic.severity.INFO] = 'I',
+        }
+    }
+})
