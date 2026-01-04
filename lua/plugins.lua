@@ -12,25 +12,18 @@ return {
             require('lualine').setup {
                 options = {
                     icons_enabled = true,
-                    theme = 'moonfly',
-                    component_separators = "",
-                    section_separators = "",
-                    always_divide_middle = false,
+                    theme = 'catppuccin',
+                    component_separators = { left = '', right = '' },
+                    section_separators = { left = '', right = '' },
+                    globalstatus = true,
                 },
                 sections = {
-                    lualine_a = { 'mode' },
+                    lualine_a = { { 'mode', icon = '' } },
                     lualine_b = { 'branch', 'diff', 'diagnostics' },
                     lualine_c = {
-                        { 'filename', path = 4 },
-                        { function()
-                            local count = 0
-                            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                                if vim.bo[buf].modified then count = count + 1 end
-                            end
-                            return count > 0 and "!" .. count or ''
-                        end },
+                        { 'filename', path = 1, symbols = { modified = ' ●', readonly = ' ', unnamed = '[No Name]' } },
                     },
-                    lualine_x = { 'encoding', 'fileformat', 'filetype' },
+                    lualine_x = { 'filetype' },
                     lualine_y = { 'progress' },
                     lualine_z = { 'location' },
                 },
@@ -112,8 +105,12 @@ return {
         },
         config = function()
             local actions = require('telescope.actions')
+            local previewers = require('telescope.previewers')
+
             require('telescope').setup {
                 defaults = {
+                    file_previewer = previewers.vim_buffer_cat.new,
+                    grep_previewer = previewers.vim_buffer_vimgrep.new,
                     mappings = {
                         i = {
                             ['<C-h>'] = 'which_key',
@@ -132,29 +129,134 @@ return {
         end
     },
 
-    -- Theme
+    -- Theme (Catppuccin - modern, material-like)
     {
-        'nyoom-engineering/oxocarbon.nvim',
+        'catppuccin/nvim',
+        name = 'catppuccin',
         lazy = false,
         priority = 1000,
         config = function()
+            require('catppuccin').setup {
+                flavour = 'mocha', -- latte, frappe, macchiato, mocha
+                transparent_background = false,
+                term_colors = true,
+                styles = {
+                    comments = { 'italic' },
+                    conditionals = { 'italic' },
+                    functions = { 'bold' },
+                    keywords = { 'bold' },
+                },
+                integrations = {
+                    cmp = true,
+                    gitsigns = true,
+                    nvimtree = true,
+                    telescope = { enabled = true },
+                    treesitter = true,
+                    mason = true,
+                    native_lsp = {
+                        enabled = true,
+                        underlines = {
+                            errors = { 'undercurl' },
+                            warnings = { 'undercurl' },
+                        },
+                    },
+                },
+            }
             vim.opt.background = 'dark'
-            vim.cmd('colorscheme oxocarbon')
+            vim.cmd('colorscheme catppuccin')
         end
     },
 
-    -- Treesitter (just for parser installation, highlighting is built-in)
-    { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
+    -- Indent guides
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        main = 'ibl',
+        opts = {
+            indent = { char = '│' },
+            scope = { enabled = true, show_start = false, show_end = false },
+        },
+    },
+
+    -- Better UI for inputs/selects
+    {
+        'stevearc/dressing.nvim',
+        opts = {
+            input = { border = 'rounded' },
+            select = { backend = { 'telescope', 'builtin' } },
+        },
+    },
+
+    -- Smooth scrolling
+    {
+        'karb94/neoscroll.nvim',
+        opts = { easing_function = 'cubic' },
+    },
+
+    -- Treesitter
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
+        config = function()
+            local ok, configs = pcall(require, 'nvim-treesitter.configs')
+            if ok and configs.setup then
+                configs.setup {
+                    ensure_installed = { 'lua', 'vim', 'vimdoc', 'rust', 'go', 'yaml', 'json', 'markdown', 'typescript', 'javascript', 'python' },
+                    auto_install = true,
+                    highlight = { enable = true },
+                }
+            else
+                -- Fallback: install parsers via command
+                vim.api.nvim_create_autocmd('VimEnter', {
+                    once = true,
+                    callback = function()
+                        local parsers = { 'lua', 'vim', 'vimdoc', 'rust', 'go', 'yaml', 'json', 'markdown', 'typescript', 'javascript', 'python' }
+                        for _, lang in ipairs(parsers) do
+                            pcall(vim.cmd, 'TSInstall ' .. lang)
+                        end
+                    end,
+                })
+            end
+        end,
+    },
     { 'nvim-treesitter/nvim-treesitter-context' },
 
     -- LSP
     { 'editorconfig/editorconfig-vim' },
     { 'williamboman/mason.nvim', config = true },
+    { 'neovim/nvim-lspconfig' },
     {
         'williamboman/mason-lspconfig.nvim',
+        dependencies = { 'williamboman/mason.nvim', 'neovim/nvim-lspconfig' },
         config = function()
+            local lspconfig = require('lspconfig')
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
             require('mason-lspconfig').setup {
-                ensure_installed = { 'rust_analyzer', 'lua_ls', 'yamlls' },
+                ensure_installed = { 'rust_analyzer', 'lua_ls', 'yamlls', 'gopls', 'ts_ls', 'pyright' },
+                automatic_installation = true,
+                handlers = {
+                    -- Default handler
+                    function(server_name)
+                        lspconfig[server_name].setup { capabilities = capabilities }
+                    end,
+                    -- Custom configs
+                    ['lua_ls'] = function()
+                        lspconfig.lua_ls.setup {
+                            capabilities = capabilities,
+                            settings = {
+                                Lua = { diagnostics = { globals = { 'vim' } } }
+                            }
+                        }
+                    end,
+                    ['yamlls'] = function()
+                        lspconfig.yamlls.setup {
+                            capabilities = capabilities,
+                            settings = {
+                                yaml = { keyOrdering = false }
+                            }
+                        }
+                    end,
+                }
             }
         end
     },

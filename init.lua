@@ -112,14 +112,14 @@ end
 
 vim.keymap.set('n', '<leader>qf', quickfix, opts)
 
-vim.cmd [[hi DiffAdd      gui=none    guifg=NONE          guibg=#bada9f]]
-vim.cmd [[hi DiffChange   gui=none    guifg=NONE          guibg=#e5d5ac]]
-vim.cmd [[hi DiffDelete   gui=bold    guifg=#ff8080       guibg=#ffb0b0]]
-vim.cmd [[hi DiffText     gui=none    guifg=NONE          guibg=#8cbee2]]
-vim.cmd [[hi TreesitterContextBottom gui=none guibg=purple]]
+-- Rounded borders for floating windows
+vim.o.winborder = 'rounded'
 
--- vim.cmd [[autocmd! ColorScheme * highlight NormalFloat guibg=#1f2335]]
-vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white ]]
+-- Nicer diagnostic icons
+vim.fn.sign_define('DiagnosticSignError', { text = '', texthl = 'DiagnosticSignError' })
+vim.fn.sign_define('DiagnosticSignWarn', { text = '', texthl = 'DiagnosticSignWarn' })
+vim.fn.sign_define('DiagnosticSignInfo', { text = '', texthl = 'DiagnosticSignInfo' })
+vim.fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
 vim.api.nvim_create_user_command('Xbe', function()
   vim.cmd("'<,'>pyfile ~/Documents/alpha/nvimer/base64_encode.py")
@@ -167,7 +167,7 @@ require("lazy").setup("plugins", {
     change_detection = { notify = false },
 })
 
-------------- LSP (native vim.lsp.config) -------------
+------------- LSP keymaps -------------
 
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(args)
@@ -187,22 +187,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
-vim.lsp.config('lua_ls', {
-    settings = { Lua = { diagnostics = { globals = { 'vim' } } } }
-})
-vim.lsp.config('yamlls', {
-    settings = { yaml = { keyOrdering = false } }
-})
-vim.lsp.enable({ 'rust_analyzer', 'lua_ls', 'yamlls' })
-
 vim.diagnostic.config({
-    virtual_text = true,
+    virtual_text = { prefix = '●' },
+    float = { border = 'rounded' },
     signs = {
         text = {
-            [vim.diagnostic.severity.ERROR] = 'E',
-            [vim.diagnostic.severity.WARN] = 'W',
-            [vim.diagnostic.severity.HINT] = 'H',
-            [vim.diagnostic.severity.INFO] = 'I',
+            [vim.diagnostic.severity.ERROR] = '',
+            [vim.diagnostic.severity.WARN] = '',
+            [vim.diagnostic.severity.HINT] = '',
+            [vim.diagnostic.severity.INFO] = '',
         }
     }
 })
