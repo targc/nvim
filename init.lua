@@ -42,7 +42,7 @@ vim.opt.updatetime = 50
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"
-vim.opt.spell = true
+vim.opt.spell = false  -- disable globally, enable per filetype if needed
 vim.opt.spelllang = "en_us"
 vim.opt.encoding = "UTF-8"
 

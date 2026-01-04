@@ -12,7 +12,7 @@ return {
             require('lualine').setup {
                 options = {
                     icons_enabled = true,
-                    theme = 'catppuccin',
+                    theme = 'material',
                     component_separators = { left = '', right = '' },
                     section_separators = { left = '', right = '' },
                     globalstatus = true,
@@ -129,41 +129,63 @@ return {
         end
     },
 
-    -- Theme (Catppuccin - modern, material-like)
+    -- Theme (Material Design)
     {
-        'catppuccin/nvim',
-        name = 'catppuccin',
+        'marko-cerovac/material.nvim',
         lazy = false,
         priority = 1000,
         config = function()
-            require('catppuccin').setup {
-                flavour = 'mocha', -- latte, frappe, macchiato, mocha
-                transparent_background = false,
-                term_colors = true,
-                styles = {
-                    comments = { 'italic' },
-                    conditionals = { 'italic' },
-                    functions = { 'bold' },
-                    keywords = { 'bold' },
+            vim.g.material_style = 'deep ocean' -- oceanic, deep ocean, palenight, lighter, darker
+
+            local colors = require('material.colors')
+            require('material').setup {
+                contrast = {
+                    terminal = true,
+                    sidebars = true,
+                    floating_windows = true,
                 },
-                integrations = {
-                    cmp = true,
-                    gitsigns = true,
-                    nvimtree = true,
-                    telescope = { enabled = true },
-                    treesitter = true,
-                    mason = true,
-                    native_lsp = {
-                        enabled = true,
-                        underlines = {
-                            errors = { 'undercurl' },
-                            warnings = { 'undercurl' },
-                        },
-                    },
+                styles = {
+                    comments = { italic = true },
+                    keywords = { bold = true },
+                    functions = { bold = true },
+                },
+                plugins = {
+                    'gitsigns',
+                    'indent-blankline',
+                    'nvim-cmp',
+                    'nvim-tree',
+                    'telescope',
+                },
+                custom_highlights = {
+                    -- Make keywords pop (purple)
+                    ['@keyword'] = { fg = colors.main.purple, bold = true },
+                    ['@keyword.function'] = { fg = colors.main.purple, bold = true },
+                    ['@keyword.return'] = { fg = colors.main.purple, bold = true },
+                    ['@conditional'] = { fg = colors.main.purple, bold = true },
+
+                    -- Functions stand out (blue)
+                    ['@function'] = { fg = colors.main.blue, bold = true },
+                    ['@function.call'] = { fg = colors.main.blue },
+                    ['@method'] = { fg = colors.main.blue },
+                    ['@method.call'] = { fg = colors.main.blue },
+
+                    -- Types prominent (yellow)
+                    ['@type'] = { fg = colors.main.yellow, bold = true },
+                    ['@type.builtin'] = { fg = colors.main.yellow },
+
+                    -- Strings subdued (green, no italic)
+                    ['@string'] = { fg = colors.main.green },
+
+                    -- Struct tags less prominent (dimmed)
+                    ['@string.special'] = { fg = colors.editor.disabled },
+                    ['@attribute'] = { fg = colors.editor.disabled },
+
+                    -- Variables normal
+                    ['@variable'] = { fg = colors.editor.fg },
+                    ['@parameter'] = { fg = colors.main.orange },
                 },
             }
-            vim.opt.background = 'dark'
-            vim.cmd('colorscheme catppuccin')
+            vim.cmd('colorscheme material')
         end
     },
 
@@ -202,10 +224,9 @@ return {
                 configs.setup {
                     ensure_installed = { 'lua', 'vim', 'vimdoc', 'rust', 'go', 'yaml', 'json', 'markdown', 'typescript', 'javascript', 'python' },
                     auto_install = true,
-                    highlight = { enable = true },
+                    highlight = { enable = true, additional_vim_regex_highlighting = false },
                 }
             else
-                -- Fallback: install parsers via command
                 vim.api.nvim_create_autocmd('VimEnter', {
                     once = true,
                     callback = function()
@@ -219,6 +240,43 @@ return {
         end,
     },
     { 'nvim-treesitter/nvim-treesitter-context' },
+
+    -- Rainbow brackets
+    {
+        'HiPhish/rainbow-delimiters.nvim',
+        config = function()
+            local rainbow = require('rainbow-delimiters')
+            vim.g.rainbow_delimiters = {
+                strategy = {
+                    [''] = rainbow.strategy['global'],
+                },
+                query = {
+                    [''] = 'rainbow-delimiters',
+                },
+                highlight = {
+                    'RainbowDelimiterRed',
+                    'RainbowDelimiterYellow',
+                    'RainbowDelimiterBlue',
+                    'RainbowDelimiterOrange',
+                    'RainbowDelimiterGreen',
+                    'RainbowDelimiterViolet',
+                    'RainbowDelimiterCyan',
+                },
+            }
+        end
+    },
+
+    -- Highlight color codes
+    {
+        'NvChad/nvim-colorizer.lua',
+        opts = {
+            user_default_options = {
+                names = false,
+                css = true,
+                tailwind = true,
+            },
+        },
+    },
 
     -- LSP
     { 'editorconfig/editorconfig-vim' },
