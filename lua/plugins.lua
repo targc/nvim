@@ -129,15 +129,24 @@ return {
         end
     },
 
-    -- Theme (Material Design)
+    -- Theme (Custom purple/red/darkblue palette)
     {
         'marko-cerovac/material.nvim',
         lazy = false,
         priority = 1000,
         config = function()
-            vim.g.material_style = 'deep ocean' -- oceanic, deep ocean, palenight, lighter, darker
+            vim.g.material_style = 'deep ocean'
 
-            local colors = require('material.colors')
+            -- Custom palette: purple, red, dark blue
+            local purple = '#c792ea'
+            local light_purple = '#d6acff'
+            local red = '#ff5370'
+            local dark_red = '#f07178'
+            local dark_blue = '#5c7ab5'
+            local blue = '#82aaff'
+            local gray = '#676e95'
+            local white = '#c3d0eb'
+
             require('material').setup {
                 contrast = {
                     terminal = true,
@@ -157,32 +166,101 @@ return {
                     'telescope',
                 },
                 custom_highlights = {
-                    -- Make keywords pop (purple)
-                    ['@keyword'] = { fg = colors.main.purple, bold = true },
-                    ['@keyword.function'] = { fg = colors.main.purple, bold = true },
-                    ['@keyword.return'] = { fg = colors.main.purple, bold = true },
-                    ['@conditional'] = { fg = colors.main.purple, bold = true },
+                    -- Keywords: purple, bold
+                    ['@keyword'] = { fg = purple, bold = true },
+                    ['@keyword.function'] = { fg = purple, bold = true },
+                    ['@keyword.return'] = { fg = purple, bold = true },
+                    ['@conditional'] = { fg = purple, bold = true },
+                    ['@repeat'] = { fg = purple, bold = true },
+                    ['@include'] = { fg = purple },
 
-                    -- Functions stand out (blue)
-                    ['@function'] = { fg = colors.main.blue, bold = true },
-                    ['@function.call'] = { fg = colors.main.blue },
-                    ['@method'] = { fg = colors.main.blue },
-                    ['@method.call'] = { fg = colors.main.blue },
+                    -- Functions: blue
+                    ['@function'] = { fg = blue, bold = true },
+                    ['@function.call'] = { fg = blue },
+                    ['@method'] = { fg = blue },
+                    ['@method.call'] = { fg = blue },
+                    ['@function.builtin'] = { fg = blue },
 
-                    -- Types prominent (yellow)
-                    ['@type'] = { fg = colors.main.yellow, bold = true },
-                    ['@type.builtin'] = { fg = colors.main.yellow },
+                    -- Types: light purple (NO YELLOW)
+                    ['@type'] = { fg = light_purple },
+                    ['@type.builtin'] = { fg = light_purple },
+                    ['@type.definition'] = { fg = light_purple },
+                    ['@type.qualifier'] = { fg = purple },
+                    ['@storageclass'] = { fg = purple },
+                    Type = { fg = light_purple },
+                    Typedef = { fg = light_purple },
+                    Structure = { fg = light_purple },
 
-                    -- Strings subdued (green, no italic)
-                    ['@string'] = { fg = colors.main.green },
+                    -- Strings: red
+                    ['@string'] = { fg = dark_red },
+                    ['@character'] = { fg = dark_red },
+                    String = { fg = dark_red },
 
-                    -- Struct tags less prominent (dimmed)
-                    ['@string.special'] = { fg = colors.editor.disabled },
-                    ['@attribute'] = { fg = colors.editor.disabled },
+                    -- Constants/numbers: red (NO YELLOW)
+                    ['@constant'] = { fg = red },
+                    ['@constant.builtin'] = { fg = red },
+                    ['@number'] = { fg = red },
+                    ['@number.float'] = { fg = red },
+                    ['@boolean'] = { fg = red },
+                    Constant = { fg = red },
+                    Number = { fg = red },
+                    Float = { fg = red },
+                    Boolean = { fg = red },
 
-                    -- Variables normal
-                    ['@variable'] = { fg = colors.editor.fg },
-                    ['@parameter'] = { fg = colors.main.orange },
+                    -- Struct tags/labels dimmed
+                    ['@string.special'] = { fg = gray },
+                    ['@attribute'] = { fg = gray },
+                    ['@tag.attribute'] = { fg = gray },
+                    ['@label'] = { fg = gray },
+
+                    -- Fields/properties: white (NO YELLOW)
+                    ['@field'] = { fg = white },
+                    ['@property'] = { fg = white },
+                    ['@lsp.type.property'] = { fg = white },
+                    ['@variable.member'] = { fg = white },
+
+                    -- Variables: white/normal
+                    ['@variable'] = { fg = white },
+                    ['@variable.builtin'] = { fg = dark_blue },
+                    ['@parameter'] = { fg = dark_blue },
+                    Identifier = { fg = white },
+
+                    -- Operators/punctuation
+                    ['@operator'] = { fg = red },
+                    ['@punctuation.bracket'] = { fg = white },
+                    ['@punctuation.delimiter'] = { fg = white },
+                    Operator = { fg = red },
+
+                    -- Comments: gray italic
+                    ['@comment'] = { fg = gray, italic = true },
+                    Comment = { fg = gray, italic = true },
+
+                    -- Special (NO YELLOW)
+                    Special = { fg = dark_blue },
+                    SpecialChar = { fg = dark_red },
+                    Tag = { fg = purple },
+                    Delimiter = { fg = white },
+                    SpecialComment = { fg = gray },
+                    Debug = { fg = red },
+
+                    -- Warnings/search - purple instead of yellow
+                    DiagnosticWarn = { fg = light_purple },
+                    DiagnosticVirtualTextWarn = { fg = light_purple },
+                    WarningMsg = { fg = light_purple },
+                    Search = { bg = '#3d3d5c', fg = white },
+                    IncSearch = { bg = purple, fg = '#0f111a' },
+                    CurSearch = { bg = purple, fg = '#0f111a' },
+
+                    -- UI elements - no yellow
+                    Title = { fg = purple, bold = true },
+                    Directory = { fg = blue },
+                    MatchParen = { fg = red, bold = true },
+                    Question = { fg = blue },
+                    MoreMsg = { fg = blue },
+
+                    -- Git signs - no yellow
+                    GitSignsChange = { fg = blue },
+                    DiffChange = { fg = blue },
                 },
             }
             vim.cmd('colorscheme material')
